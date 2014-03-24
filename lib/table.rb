@@ -41,7 +41,7 @@ class Table
 	# end
 
 	def Table.flush(hand)
-		suits = %w{H S C D}
+		suits = %w{ H S C D }
 		x = false
 		suits.each do |s|
 			x = true if (hand.select { |card| card.suit == s } ).length >= 5
@@ -51,6 +51,38 @@ class Table
 
 	def Table.straight(hand)
 		x = false
+		hand.sort_by! { |card| card.rank }
+		until hand.length < 5 do
+			if (hand[-1].rank - hand[-1 -4].rank).abs == 4
+				x = true
+			end
+		hand.pop
+		end
+		x
+	end
 
+	def Table.pair(hand)
+		x = false
+		hand.each do |card|
+			if hand.any? { |c| card.rank == c.rank }
+				x = true
+			end
+		end
+		x
+	end
+
+	#working on two pair... one pair ignores 2 pair and 3 of a kind
+	#hypothesis is if you find one pair, delete those two and run  again
+	def Table.two_pair(hand)
+		pairs = 0
+		until #something hand.each do |card|
+			if hand.any? { |c| card.rank == c.rank }
+				pairs += 1
+				hand.delete(c)
+				hand.delete(card)
+				Table.two_pair(hand)
+			end
+		end
+		x
 	end
 end

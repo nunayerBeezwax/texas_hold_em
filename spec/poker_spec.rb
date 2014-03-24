@@ -93,8 +93,45 @@ describe 'Table' do
 	describe '.straight' do
 		it 'returns true if a given hand contains any 5 rank in a row' do
 			test_hand = []
+			junk_hand = []
+			junk_hand << Card.new('D', 2)
+			junk_hand << Card.new('S', 3)
+			junk_hand << Card.new('H', 5)
+			junk_hand << Card.new('C', 7)
+			junk_hand << Card.new('D', 10)
+			junk_hand << Card.new('S', 12)
+			junk_hand << Card.new('C', 9)
 			7.times { |i| test_hand << Card.new('S', i + 1) }
 			Table.straight(test_hand).should eq true
+			Table.straight(junk_hand).should eq false
+		end
+	end
+
+	describe '.pair' do
+		it 'returns true if a given hand contains any two cards with same rank' do
+			test_hand = []
+			test_hand << Card.new('D', 2)
+			test_hand << Card.new('S', 3)
+			test_hand << Card.new('H', 3)
+			test_hand << Card.new('C', 7)
+			test_hand << Card.new('D', 10)
+			test_hand << Card.new('S', 12)
+			test_hand << Card.new('C', 9)
+			Table.pair(test_hand).should eq true
+		end
+	end
+
+	describe '.two_pair' do
+		it 'returns true if a given hand contains any two pairs' do
+			test_hand = []
+			test_hand << Card.new('D', 2)
+			test_hand << Card.new('S', 3)
+			test_hand << Card.new('H', 3)
+			test_hand << Card.new('C', 7)
+			test_hand << Card.new('D', 10)
+			test_hand << Card.new('S', 12)
+			test_hand << Card.new('C', 9)
+			Table.pair(test_hand).should eq false
 		end
 	end
 end
