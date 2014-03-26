@@ -66,6 +66,7 @@ describe 'Table' do
 			test_table.board.should eq []
 		end
 	end
+	
 	describe '#showdown' do
 		it 'collects all remaining players hands into an array' do
 			test_game = Deal.new
@@ -74,9 +75,23 @@ describe 'Table' do
 			test_game.turn
 			test_game.river
 			test_game.table.showdown
-			test_game.table.hands.length.should eq 9
+			test_game.table.showdown.winner.length.should eq 9
 		end
 	end
+
+	describe '#make_best' do
+		it 'receives a hand and returns the best hand type it contains' do
+			test_hand = []
+			test_hand << Card.new('D', 3)
+			test_hand << Card.new('D', 2)
+			test_hand << Card.new('D', 5)
+			test_hand << Card.new('D', 4)
+			test_hand << Card.new('D', 6)
+			test_hand << Card.new('C', 5)
+			test_hand << Card.new('S', 4)
+			Table.make_best(test_hand).should eq 'straight_flush'
+		end
+	end	
 
 	describe '.flush' do
 		it 'returns true if a given hand contains at least 5 of a suit' do
@@ -128,10 +143,66 @@ describe 'Table' do
 			test_hand << Card.new('S', 3)
 			test_hand << Card.new('H', 3)
 			test_hand << Card.new('C', 7)
-			test_hand << Card.new('D', 10)
+			test_hand << Card.new('D', 7)
 			test_hand << Card.new('S', 12)
 			test_hand << Card.new('C', 9)
-			Table.pair(test_hand).should eq false
+			Table.two_pair(test_hand).should eq true
+		end
+	end
+
+	describe '.three_of_a_kind' do
+		it 'returns true if a given hand has any three cards of same rank' do
+			test_hand = []
+			test_hand << Card.new('D', 2)
+			test_hand << Card.new('S', 3)
+			test_hand << Card.new('H', 3)
+			test_hand << Card.new('C', 4)
+			test_hand << Card.new('D', 7)
+			test_hand << Card.new('S', 12)
+			test_hand << Card.new('C', 9)
+			Table.three_of_a_kind(test_hand).should eq false
+		end
+	end
+
+	describe '.full_house' do
+		it 'returns true if a given hand has any pair and three cards of same rank' do
+			test_hand = []
+			test_hand << Card.new('D', 2)
+			test_hand << Card.new('S', 3)
+			test_hand << Card.new('H', 3)
+			test_hand << Card.new('C', 4)
+			test_hand << Card.new('D', 4)
+			test_hand << Card.new('S', 3)
+			test_hand << Card.new('C', 9)
+			Table.full_house(test_hand).should eq true
+		end
+	end
+
+	describe '.four_of_a_kind' do
+		it 'returns true if a given hand has any four cards of same rank' do
+			test_hand = []
+			test_hand << Card.new('D', 3)
+			test_hand << Card.new('S', 3)
+			test_hand << Card.new('H', 11)
+			test_hand << Card.new('C', 3)
+			test_hand << Card.new('D', 7)
+			test_hand << Card.new('S', 12)
+			test_hand << Card.new('C', 9)
+			Table.four_of_a_kind(test_hand).should eq false
+		end
+	end
+
+	describe '.straight_flush' do
+		it 'returns true if a given hand has a straight all in one suit' do
+			test_hand = []
+			test_hand << Card.new('D', 3)
+			test_hand << Card.new('D', 4)
+			test_hand << Card.new('D', 9)
+			test_hand << Card.new('D', 6)
+			test_hand << Card.new('D', 7)
+			test_hand << Card.new('S', 12)
+			test_hand << Card.new('C', 9)
+			Table.straight_flush(test_hand).should eq false
 		end
 	end
 end
