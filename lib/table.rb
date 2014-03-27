@@ -22,8 +22,17 @@ class Table
 		@hands.each do |hand, player|
 			winner << "Player #{hand.player}: #{Table.make_best(hand.hand)}"
 		end
+		@table.each do |player|
+			puts "---------"
+			player.hole_cards.each do |card|
+				puts "#{player.seat}: #{card.rank} #{card.suit}"
+			end
+		end
+		@board.each do |card|
+			puts "#{card.rank} #{card.suit}"
+		end
 		puts winner
-		@board.each { |c| pp c.rank }
+		return winner
 	end
 
 	def Table.make_best(hand)
@@ -126,11 +135,9 @@ class Table
 		until i == 14
 			if hand.count { |card| card.rank == i } == 3
 				trips += 1
-				i += 1
 			end
 			if hand.count { |card| card.rank == i } == 2
 				pairs += 1
-				i += 1
 			end
 			i += 1
 		end
@@ -147,7 +154,6 @@ class Table
 		until i == 14
 			if hand.count { |card| card.rank == i } == 4
 				quads += 1
-				i += 1
 			end
 			i += 1
 		end
@@ -158,25 +164,28 @@ class Table
 	end
 
 	def Table.straight_flush(hand)
+		straight = false
 		temp_hand = hand.clone
 		temp_hand.sort_by! { |card| card.rank }
 		temp_hand.uniq! { |card| card.rank }
 		if temp_hand.length == 5
 			if (temp_hand[0].rank - temp_hand[4].rank).abs == 4
-				return true
+				straight = true
 			end
 		elsif temp_hand.length == 6
 			if (temp_hand[1].rank - temp_hand[5].rank).abs == 4
-				return true
+				straight = true
 			end
 		elsif temp_hand.length == 7
 			if (temp_hand[2].rank - temp_hand[6].rank).abs == 4
-				return true
+				straight = true
 			end
+		end
+		if straight == true 
 			if temp_hand.count { |card| card.suit } == 5
 				return true
 			end
 		end
-		false
+	false
 	end
 end
