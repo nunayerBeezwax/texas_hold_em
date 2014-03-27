@@ -4,6 +4,6 @@ class Card
 
 	def initialize(suit, rank)
 		@suit = suit
-		@rank = rank
+		@rank = rank.to_i
 	end
 end

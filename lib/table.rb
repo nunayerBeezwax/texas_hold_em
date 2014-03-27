@@ -13,10 +13,6 @@ class Table
 		@board << card
 	end
 
-	# Left it here, working on showdown.  The problem is... by the time we run make_best on a hand
-	# the ranks of the cards are all strings instead of integers so many of the hand check methods
-	# don't work.  I don't know at what point/why they become stringed...
-
 	def showdown
 		@hands = []
 		winner = []
@@ -24,19 +20,21 @@ class Table
 			@hands << player.combine(@board)
 		end
 		@hands.each do |hand, player|
-			binding.pry
-			winner << "#{Table.make_best(hand.hand)} + " " + #{hand.player}"
+			winner << "Player #{hand.player}: #{Table.make_best(hand.hand)}"
 		end
 		puts winner
+		@board.each { |c| pp c.rank }
 	end
 
 	def Table.make_best(hand)
-		score = 1
+		score = 0
 		best_hand = { 1 => 'high_card', 2 => 'pair', 3 => 'two_pair', 4 => 'three_of_a_kind',
 					  5 => 'straight', 6 => 'flush', 7 => 'full_house', 8 => 'four_of_a_kind',
 					  9 => 'straight_flush' }
+
 		best_hand.each do |key, value|
-			x = eval("#{value}(hand)")
+
+			x = eval("Table.#{value}(hand)")
 			if x == true
 				score = key
 			end
@@ -45,13 +43,14 @@ class Table
 	end
 
 	def Table.high_card(hand)
-		hand.sort_by! { |card| card.rank }
+		hand.sort_by { |card| card.rank }
+		true
 	end
 
 	def Table.pair(hand)
 		x = false
 		hand.each do |card|
-			if hand.any? { |c| card.rank == c.rank }
+			if hand.any? { |c| card.rank == c.rank && card != c }
 				x = true
 			end
 		end
@@ -60,12 +59,11 @@ class Table
 
 	def Table.two_pair(hand)
 		pairs = 0
-		x = false 
+		x = false
 		i = 2
 		until i == 14
 			if hand.count { |card| card.rank == i } == 2
 				pairs += 1
-				i += 1
 			end
 			i += 1
 		end
@@ -77,12 +75,11 @@ class Table
 
 	def Table.three_of_a_kind(hand)
 		trips = 0
-		x = false 
+		x = false
 		i = 2
 		until i == 14
 			if hand.count { |card| card.rank == i } == 3
 				trips += 1
-				i += 1
 			end
 			i += 1
 		end
@@ -91,17 +88,25 @@ class Table
 		end
 		x
 	end
-	
+
 	def Table.straight(hand)
-		x = false
-		i = -1
-		until (i-4).abs > hand.uniq{|c| c.rank}.length do
-			if (hand.uniq{|c| c.rank}[i].rank - hand.uniq{|c| c.rank}[i -4].rank).abs == 4
-				x = true
+		temp_hand = hand.clone
+		temp_hand.sort_by! { |card| card.rank }
+		temp_hand.uniq! { |card| card.rank }
+		if temp_hand.length == 5
+			if (temp_hand[0].rank - temp_hand[4].rank).abs == 4
+				return true
 			end
-		i -= 1
+		elsif temp_hand.length == 6
+			if (temp_hand[1].rank - temp_hand[5].rank).abs == 4
+				return true
+			end
+		elsif temp_hand.length == 7
+			if (temp_hand[2].rank - temp_hand[6].rank).abs == 4
+				return true
+			end
 		end
-		x
+		false
 	end
 
 	def Table.flush(hand)
@@ -116,7 +121,7 @@ class Table
 	def Table.full_house(hand)
 		trips = 0
 		pairs = 0
-		x = false 
+		x = false
 		i = 2
 		until i == 14
 			if hand.count { |card| card.rank == i } == 3
@@ -137,7 +142,7 @@ class Table
 
 	def Table.four_of_a_kind(hand)
 		quads = 0
-		x = false 
+		x = false
 		i = 2
 		until i == 14
 			if hand.count { |card| card.rank == i } == 4
@@ -153,17 +158,25 @@ class Table
 	end
 
 	def Table.straight_flush(hand)
-		x = false
-		i = -1
-		until (i-4).abs > hand.uniq{|c| c.rank}.length do
-			if (hand.uniq{|c| c.rank}[i].rank - hand.uniq{|c| c.rank}[i -4].rank).abs == 4
-				x = true
+		temp_hand = hand.clone
+		temp_hand.sort_by! { |card| card.rank }
+		temp_hand.uniq! { |card| card.rank }
+		if temp_hand.length == 5
+			if (temp_hand[0].rank - temp_hand[4].rank).abs == 4
+				return true
 			end
-		i -= 1
+		elsif temp_hand.length == 6
+			if (temp_hand[1].rank - temp_hand[5].rank).abs == 4
+				return true
+			end
+		elsif temp_hand.length == 7
+			if (temp_hand[2].rank - temp_hand[6].rank).abs == 4
+				return true
+			end
+			if temp_hand.count { |card| card.suit } == 5
+				return true
+			end
 		end
-		if hand.count { |card| card.suit } == 5
-			x = true
-		end
-		x
+		false
 	end
 end

@@ -15,7 +15,7 @@ describe 'Deck' do
 			test_deck.deck.length.should eq 52
 			test_deck.deck[0].should be_an_instance_of Card
 		end
-	end	
+	end
 end
 
 describe 'Card' do
@@ -66,7 +66,7 @@ describe 'Table' do
 			test_table.board.should eq []
 		end
 	end
-	
+
 	describe '#showdown' do
 		it 'collects all remaining players hands into an array' do
 			test_game = Deal.new
@@ -75,7 +75,7 @@ describe 'Table' do
 			test_game.turn
 			test_game.river
 			test_game.table.showdown
-			test_game.table.showdown.winner.length.should eq 9
+			test_game.table.showdown.length.should eq 9
 		end
 	end
 
@@ -91,7 +91,7 @@ describe 'Table' do
 			test_hand << Card.new('S', 4)
 			Table.make_best(test_hand).should eq 'straight_flush'
 		end
-	end	
+	end
 
 	describe '.flush' do
 		it 'returns true if a given hand contains at least 5 of a suit' do
@@ -127,12 +127,12 @@ describe 'Table' do
 			test_hand = []
 			test_hand << Card.new('D', 2)
 			test_hand << Card.new('S', 3)
-			test_hand << Card.new('H', 3)
+			test_hand << Card.new('H', 8)
 			test_hand << Card.new('C', 7)
 			test_hand << Card.new('D', 10)
 			test_hand << Card.new('S', 12)
 			test_hand << Card.new('C', 9)
-			Table.pair(test_hand).should eq true
+			Table.pair(test_hand).should eq false
 		end
 	end
 
@@ -230,7 +230,7 @@ end
 			test_deal.deck.deck.length.should eq 34
 		end
 	end
-	
+
 	describe '#flop' do
 		it 'removes 3 cards from the deck and displays them as community cards' do
 			test_deal = Deal.new
